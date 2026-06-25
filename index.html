@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INTEL-SENTRY // OSINT Recon Console</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1 data-translate="title">INTEL-SENTRY 🌐</h1>
+                <div class="subtitle" data-translate="subtitle">Asynchronous Digital Footprint Aggregator & OSINT Reconnaissance Console</div>
+            </div>
+            <div class="lang-control">
+                <select id="lang-select" class="lang-select" onchange="changeLanguage()">
+                    <option value="ru" selected>RU</option>
+                    <option value="en">EN</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="tabs-wrapper">
+            <div class="tabs">
+                <button id="tab-personality-btn" class="tab-btn active" onclick="switchTab('personality')" data-translate="tab_personality">👤 Личность & Документы</button>
+                <button id="tab-contacts-btn" class="tab-btn" onclick="switchTab('contacts')" data-translate="tab_contacts">📞 Контакты & Соцсети</button>
+                <button id="tab-assets-btn" class="tab-btn" onclick="switchTab('assets')" data-translate="tab_assets">🚘 Транспорт & Имущество</button>
+                <button id="tab-traces-btn" class="tab-btn" onclick="switchTab('traces')" data-translate="tab_traces">🌐 Следы & Поиск Лица</button>
+            </div>
+        </div>
+
+        <div class="tab-content active personality">
+            <div class="input-grid">
+                <div class="form-group">
+                    <label data-translate="label_fio">ФИО / Возраст / Дата рождения</label>
+                    <input type="text" class="p-fio" placeholder="Навальный Алексей Анатольевич 04.06.1976">
+                </div>
+                <div class="form-group">
+                    <label data-translate="label_passport">Номер паспорта РФ / СНГ</label>
+                    <input type="text" class="p-passport" placeholder="Серия Номер (например, 4515 123456)">
+                </div>
+                <div class="form-group">
+                    <label data-translate="label_snils">СНИЛС</label>
+                    <input type="text" class="p-snils" placeholder="XXX-XXX-XXX YY">
+                </div>
+                <div class="form-group">
+                    <label data-translate="label_inn">ИНН (Физическое / Юридическое лицо)</label>
+                    <input type="text" class="p-inn" placeholder="10 или 12 цифр">
+                </div>
+            </div>
+            <button class="action-btn" onclick="executeScan('personality')" data-translate="btn_personality">ЗАПУСТИТЬ АНАЛИЗ ЛИЧНОСТИ</button>
+        </div>
+
+        <div class="tab-content contacts">
+            <div class="input-grid">
+                <div class="form-group">
+                    <label data-translate="label_phone">Номер телефона</label>
+                    <input type="text" class="c-phone" placeholder="79999688666 / +380...">
+                </div>
+                <div class="form-group">
+                    <label data-translate="label_email">E-mail адрес</label>
+                    <input type="text" class="c-email" placeholder="example@mail.ru">
+                </div>
+                <div class="form-group">
+                    <label data-translate="label_telegram">Telegram (Логин / ID)</label>
+                    <input type="text" class="c-telegram" placeholder="@username или tg123456">
+                </div>
+                <div class="form-group">
+                    <label data-translate="label_social">Профили (VK / TikTok / Instagram / OK)</label>
+                    <input type="text" class="c-social" placeholder="Ссылка или никнейм">
+                </div>
+            </div>
+            <button class="action-btn" onclick="executeScan('contacts')" data-translate="btn_contacts">ЗАПУСТИТЬ ПОИСК КОНТАКТОВ</button>
+        </div>
+
+        <div class="tab-content assets">
+            <div class="input-grid">
+                <div class="form-group">
+                    <label data-translate="label_plate">Гос. номер автомобиля</label>
+                    <input type="text" class="a-plate" placeholder="B3950K199">
+                </div>
+                <div class="form-group">
+                    <label data-translate="label_vin">VIN номер автомобиля</label>
+                    <input type="text" class="a-vin" placeholder="17 символов">
+                </div>
+                <div class="form-group">
+                    <label data-translate="label_address">Адрес недвижимости</label>
+                    <input type="text" class="a-address" placeholder="Город, Улица, Дом">
+                </div>
+                <div class="form-group">
+                    <label data-translate="label_cadastral">Кадастровый номер</label>
+                    <input type="text" class="a-cadastral" placeholder="77:01:0004042:6987">
+                </div>
+            </div>
+            <button class="action-btn" onclick="executeScan('assets')" data-translate="btn_assets">ЗАПУСТИТЬ АНАЛИЗ ИМУЩЕСТВА</button>
+        </div>
+
+        <div class="tab-content traces">
+            <div class="input-grid">
+                <div class="form-group">
+                    <label data-translate="label_domain">Домен или IP-адрес</label>
+                    <input type="text" class="t-domain" placeholder="google.com или 1.1.1.1">
+                </div>
+                <div class="form-group">
+                    <label data-translate="label_tags">Поиск по тегам (телефонные книги)</label>
+                    <input type="text" class="t-tags" placeholder="хирург москва">
+                </div>
+                <div class="form-group">
+                    <label data-translate="label_face">Поиск по лицу (Загрузка фото)</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" class="t-face file-input" accept="image/*">
+                    </div>
+                </div>
+            </div>
+            <button class="action-btn" onclick="executeScan('traces')" data-translate="btn_traces">ЗАПУСТИТЬ ПОИСК СЛЕДОВ</button>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline-event info init-event">
+                <div class="event-time">SYSTEM CONSOLE READY</div>
+                <div class="event-title" data-translate="ready_title">Ожидание параметров цели...</div>
+                <div class="event-detail" data-translate="ready_detail">Заполните поля в нужной вкладке и нажмите кнопку запуска сканирования для получения данных.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEventSource = null;
+        let currentLang = 'ru';
+
+        const translations = {
+            ru: {
+                title: "INTEL-SENTRY 🌐",
+                subtitle: "Asynchronous Digital Footprint Aggregator & OSINT Reconnaissance Console",
+                tab_personality: "👤 Личность & Документы",
+                tab_contacts: "📞 Контакты & Соцсети",
+                tab_assets: "🚘 Транспорт & Имущество",
+                tab_traces: "🌐 Следы & Поиск Лица",
+                label_fio: "ФИО / Возраст / Дата рождения",
+                label_passport: "Номер паспорта РФ / СНГ",
+                label_snils: "СНИЛС",
+                label_inn: "ИНН (Физическое / Юридическое лицо)",
+                btn_personality: "ЗАПУСТИТЬ АНАЛИЗ ЛИЧНОСТИ",
+                label_phone: "Номер телефона",
+                label_email: "E-mail адрес",
+                label_telegram: "Telegram (Логин / ID)",
+                label_social: "Профили (VK / TikTok / Instagram / OK)",
+                btn_contacts: "ЗАПУСТИТЬ ПОИСК КОНТАКТОВ",
+                label_plate: "Гос. номер автомобиля",
+                label_vin: "VIN номер автомобиля",
+                label_address: "Адрес недвижимости",
+                label_cadastral: "Кадастровый номер",
+                btn_assets: "ЗАПУСТИТЬ АНАЛИЗ ИМУЩЕСТВА",
+                label_domain: "Домен или IP-адрес",
+                label_tags: "Поиск по тегам (телефонные книги)",
+                label_face: "Поиск по лицу (Загрузка фото)",
+                btn_traces: "ЗАПУСТИТЬ ПОИСК СЛЕДОВ",
+                ready_title: "Ожидание параметров цели...",
+                ready_detail: "Заполните поля в нужной вкладке и нажмите кнопку запуска сканирования для получения данных.",
+                msg_conn: "ПОДКЛЮЧЕНИЕ К КАНАЛУ ДАННЫХ",
+                msg_conn_detail: "Установка SSE соединения...",
+                msg_img: "ОБРАБОТКА ИЗОБРАЖЕНИЯ",
+                msg_img_detail: "Загрузка биометрических данных лица...",
+                msg_upload_err: "ОШИБКА ЗАГРУЗКИ",
+                msg_upload_err_detail: "Не удалось загрузить файл лица на server.",
+                msg_init_err: "ОШИБКА ИНИЦИАЛИЗАЦИИ",
+                msg_init_err_detail: "Не заполнено ни одно поле для запуска.",
+                msg_scan_end: "СКАНИРОВАНИЕ ЗАВЕРШЕНО",
+                msg_scan_end_detail: "Поток данных закрыт."
+            },
+            en: {
+                title: "INTEL-SENTRY 🌐",
+                subtitle: "Asynchronous Digital Footprint Aggregator & OSINT Reconnaissance Console",
+                tab_personality: "👤 Identity & Documents",
+                tab_contacts: "📞 Contacts & Socials",
+                tab_assets: "🚘 Transport & Assets",
+                tab_traces: "🌐 Traces & Face Search",
+                label_fio: "Full Name / Age / Birth Date",
+                label_passport: "Passport Number (RF / CIS)",
+                label_snils: "SNILS",
+                label_inn: "INN (Individual / Legal Entity)",
+                btn_personality: "LAUNCH IDENTITY ANALYSIS",
+                label_phone: "Phone Number",
+                label_email: "E-mail Address",
+                label_telegram: "Telegram (Username / ID)",
+                label_social: "Profiles (VK / TikTok / Instagram / OK)",
+                btn_contacts: "LAUNCH CONTACTS SEARCH",
+                label_plate: "License Plate Number",
+                label_vin: "VIN Number",
+                label_address: "Real Estate Address",
+                label_cadastral: "Cadastral Number",
+                btn_assets: "LAUNCH ASSETS ANALYSIS",
+                label_domain: "Domain or IP Address",
+                label_tags: "Tag Search (Phonebooks)",
+                label_face: "Face Search (Upload Photo)",
+                btn_traces: "LAUNCH TRACES SEARCH",
+                ready_title: "Awaiting Target Parameters...",
+                ready_detail: "Fill in the fields in the desired tab and press the scan button to retrieve data.",
+                msg_conn: "CONNECTING TO DATA CHANNEL",
+                msg_conn_detail: "Establishing SSE connection...",
+                msg_img: "PROCESSING IMAGE",
+                msg_img_detail: "Uploading face biometric data...",
+                msg_upload_err: "UPLOAD ERROR",
+                msg_upload_err_detail: "Failed to upload face file to the server.",
+                msg_init_err: "INITIALIZATION ERROR",
+                msg_init_err_detail: "No fields are filled for initialization.",
+                msg_scan_end: "SCANNING COMPLETE",
+                msg_scan_end_detail: "Data stream closed."
+            }
+        };
+
+        function changeLanguage() {
+            currentLang = document.querySelector('.lang-select').value;
+            document.querySelectorAll('[data-translate]').forEach(elem => {
+                const key = elem.getAttribute('data-translate');
+                if (translations[currentLang][key]) {
+                    elem.textContent = translations[currentLang][key];
+                }
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.querySelector('.' + tabId).classList.add('active');
+            
+            const targetBtn = document.querySelector('.tab-' + tabId + '-btn');
+            if (targetBtn) {
+                targetBtn.classList.add('active');
+            } else {
+                const legacyBtn = document.querySelector('.tab-btn[onclick*="' + tabId + '"]');
+                if (legacyBtn) {
+                    legacyBtn.classList.add('active');
+                }
+            }
+        }
+
+        function appendEvent(title, detail, type = 'info') {
+            const timeline = document.querySelector('.timeline-container');
+            const eventDiv = document.createElement('div');
+            eventDiv.className = `timeline-event ${type}`;
+            const now = new Date().toISOString().split('T')[1].slice(0, 8);
+            eventDiv.innerHTML = `
+                <div class="event-time">[${now}]</div>
+                <div class="event-title">${title}</div>
+                <div class="event-detail">${detail}</div>
+            `;
+            timeline.appendChild(eventDiv);
+            timeline.scrollTop = timeline.scrollHeight;
+        }
+
+        async function executeScan(tabId) {
+            if (currentEventSource) {
+                currentEventSource.close();
+            }
+            const timeline = document.querySelector('.timeline-container');
+            timeline.innerHTML = '';
+
+            let payload = {};
+            if (tabId === 'personality') {
+                payload = {
+                    type: 'personality',
+                    fio: document.querySelector('.p-fio').value.trim(),
+                    passport: document.querySelector('.p-passport').value.trim(),
+                    snils: document.querySelector('.p-snils').value.trim(),
+                    inn: document.querySelector('.p-inn').value.trim()
+                };
+            } else if (tabId === 'contacts') {
+                payload = {
+                    type: 'contacts',
+                    phone: document.querySelector('.c-phone').value.trim(),
+                    email: document.querySelector('.c-email').value.trim(),
+                    telegram: document.querySelector('.c-telegram').value.trim(),
+                    social: document.querySelector('.c-social').value.trim()
+                };
+            } else if (tabId === 'assets') {
+                payload = {
+                    type: 'assets',
+                    plate: document.querySelector('.a-plate').value.trim(),
+                    vin: document.querySelector('.a-vin').value.trim(),
+                    address: document.querySelector('.a-address').value.trim(),
+                    cadastral: document.querySelector('.a-cadastral').value.trim()
+                };
+            } else if (tabId === 'traces') {
+                const faceFile = document.querySelector('.t-face').files[0];
+                if (faceFile) {
+                    appendEvent(translations[currentLang].msg_img, translations[currentLang].msg_img_detail, 'info');
+                    const formData = new FormData();
+                    formData.append('face', faceFile);
+                    try {
+                        const response = await fetch(`/face_upload?lang=${currentLang}`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const resData = await response.json();
+                        appendEvent(resData.title, resData.detail, resData.status);
+                    } catch (e) {
+                        appendEvent(translations[currentLang].msg_upload_err, translations[currentLang].msg_upload_err_detail, 'error');
+                    }
+                }
+                payload = {
+                    type: 'traces',
+                    domain: document.querySelector('.t-domain').value.trim(),
+                    tags: document.querySelector('.t-tags').value.trim()
+                };
+            }
+
+            const activeFields = Object.keys(payload).filter(k => payload[k] && k !== 'type');
+            if (activeFields.length === 0 && !document.querySelector('.t-face').files[0]) {
+                appendEvent(translations[currentLang].msg_init_err, translations[currentLang].msg_init_err_detail, 'error');
+                return;
+            }
+
+            appendEvent(translations[currentLang].msg_conn, translations[currentLang].msg_conn_detail, 'info');
+            const queryString = new URLSearchParams(payload).toString();
+            currentEventSource = new EventSource(`/scan?${queryString}&lang=${currentLang}`);
+
+            currentEventSource.onmessage = function(event) {
+                try {
+                    const payload = JSON.parse(event.data);
+                    appendEvent(payload.title, payload.detail, payload.status);
+                } catch (e) {
+                    appendEvent('DECODING ERROR', 'Corrupted stream chunk.', 'error');
+                }
+            };
+
+            currentEventSource.addEventListener('end', function() {
+                appendEvent(translations[currentLang].msg_scan_end, translations[currentLang].msg_scan_end_detail, 'success');
+                currentEventSource.close();
+                currentEventSource = null;
+            });
+
+            currentEventSource.onerror = function() {
+                currentEventSource.close();
+                currentEventSource = null;
+            };
+        }
+    </script>
+</body>
+</html>
